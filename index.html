@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sport Partner Finder — Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+
+  <header>
+    <a href="#" class="logo">Sport Partner Finder</a>
+    <div class="user-stats">
+      <span id="userNameDisplay">Welcome, Guest</span>
+      <span class="commitment-badge score-high">Commitment: --/100</span>
+      <a href="login.html" onclick="localStorage.removeItem('currentUser')" class="logout-btn">Log out</a>
+    </div>
+  </header>
+
+  <nav class="tab-navigation">
+    <button class="tab-btn active" onclick="switchTab('home')"><i class="fas fa-home"></i> Home</button>
+    <button class="tab-btn" onclick="switchTab('map')"><i class="fas fa-map-marker-alt"></i> Map</button>
+    <button class="tab-btn" onclick="switchTab('communities')"><i class="fas fa-users"></i> Communities</button>
+    <button class="tab-btn" onclick="switchTab('account')"><i class="fas fa-user"></i> Account</button>
+  </nav>
+
+  <div class="container">
+
+    <!-- TAB: HOME -->
+    <div id="tab-home" class="tab-content active">
+      <div class="card" id="searchSection">
+        <h2>🔍 Find a Sport Partner</h2>
+        <p class="subtitle">Smart matching based on skill level, distance (&lt;3km), and Commitment Score.</p>
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="sport">Sport</label>
+            <select id="sport">
+              <option value="Running">🏃 Running</option>
+              <option value="Badminton">🏸 Badminton</option>
+              <option value="Football">⚽ Football</option>
+              <option value="Gym">🏋️ Gym</option>
+              <option value="Pickleball">🏓 Pickleball</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="level">Your Skill Level</label>
+            <select id="level">
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="participants">Partners Needed</label>
+            <select id="participants">
+              <option value="1">1 person</option>
+              <option value="2">2 people</option>
+              <option value="3">3 people</option>
+              <option value="4">Team (4+)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="district">District / Area</label>
+            <input type="text" id="district" placeholder="e.g. Cau Giay, Hai Ba Trung…">
+          </div>
+        </div>
+        <div class="button-group">
+          <button id="searchBtn" class="btn-primary">Find Partners</button>
+          <button id="hostBtn" class="btn-secondary">🏅 Host a Session</button>
+        </div>
+      </div>
+
+      <div class="card hidden text-center" id="loadingSection">
+        <div class="spinner">⚙️</div>
+        <h3>Finding your best matches…</h3>
+        <p class="subtitle">Comparing distance &lt;3km, schedule overlap &amp; Commitment Score.</p>
+      </div>
+
+      <div class="card hidden" id="resultsSection">
+        <div class="card-header-flex">
+          <div>
+            <h2>🔥 Top Matches For You</h2>
+            <p class="subtitle">Top 5 most compatible open sessions right now.</p>
+          </div>
+          <button id="resetBtn" class="btn-secondary" style="width:auto;white-space:nowrap;margin:0">← New Search</button>
+        </div>
+        <div id="matchList"></div>
+      </div>
+    </div>
+
+    <!-- TAB: MAP -->
+    <div id="tab-map" class="tab-content">
+      <div class="card">
+        <div class="card-header-flex" style="margin-bottom:1rem">
+          <div>
+            <h2 style="margin-bottom:4px">📍 Sessions Near You</h2>
+            <p class="subtitle" style="margin:0">Click any pin to see session details and join instantly.</p>
+          </div>
+          <button id="getLocationBtn" class="btn-primary-sm">📍 Locate Me</button>
+        </div>
+        <div id="map" style="height:500px;border-radius:12px;border:1px solid var(--border)"></div>
+        <div class="map-legend">
+          <span><span class="dot green"></span> Open — spots available</span>
+          <span><span class="dot red"></span> Full</span>
+          <span style="color:var(--text-light);font-size:0.8rem;margin-left:auto">🏃 Running &nbsp;🏸 Badminton &nbsp;⚽ Football &nbsp;🏋️ Gym &nbsp;🏓 Pickleball</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: COMMUNITIES -->
+    <div id="tab-communities" class="tab-content">
+
+      <!-- Search / Filter bar -->
+      <div class="card" style="padding:1.25rem 1.75rem;margin-bottom:1rem">
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <input type="text" id="communitySearch" placeholder="Search clubs by name, sport, or district…" style="flex:1;min-width:180px">
+          <select id="communityFilter" style="width:auto">
+            <option value="all">All Sports</option>
+            <option value="Badminton">🏸 Badminton</option>
+            <option value="Running">🏃 Running</option>
+            <option value="Football">⚽ Football</option>
+            <option value="Pickleball">🏓 Pickleball</option>
+            <option value="Gym">🏋️ Gym</option>
+            <option value="Cycling">🚴 Cycling</option>
+          </select>
+          <button class="btn-primary-sm" onclick="filterCommunities()">Filter</button>
+        </div>
+      </div>
+
+      <!-- Stats strip -->
+      <div class="comm-stats-strip">
+        <div class="comm-stat"><strong>8</strong><span>Active Clubs</span></div>
+        <div class="comm-stat"><strong>1,240</strong><span>Total Members</span></div>
+        <div class="comm-stat"><strong>12</strong><span>Events This Week</span></div>
+      </div>
+
+      <!-- Club cards rendered by JS -->
+      <div id="communityGrid"></div>
+
+      <!-- Create club CTA -->
+      <div class="card" style="text-align:center;padding:2rem;border:2px dashed var(--border);background:#fafafa;margin-top:0.5rem">
+        <div style="font-size:2rem;margin-bottom:0.5rem">🏆</div>
+        <h3 style="margin-bottom:0.4rem">Start your own club</h3>
+        <p class="subtitle" style="margin-bottom:1.25rem">Gather 3+ regular players and form a Mini-Group open to your whole district.</p>
+        <button class="btn-primary" style="width:auto;padding:0.6rem 1.5rem" onclick="showCreateClubModal()">+ Create a Club</button>
+      </div>
+
+    </div>
+
+    <!-- TAB: ACCOUNT -->
+    <div id="tab-account" class="tab-content">
+
+      <!-- Commitment score banner -->
+      <div class="card" style="background:linear-gradient(135deg,#eff6ff 0%,#fff 100%)">
+        <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+          <div style="font-size:3rem">🏅</div>
+          <div style="flex:1">
+            <h2 id="profileName" style="margin-bottom:4px">My Profile</h2>
+            <p class="subtitle" style="margin:0">Keep your Commitment Score high to get priority matching.</p>
+          </div>
+          <div style="text-align:center;min-width:110px">
+            <div id="scoreDisplay" style="font-size:2.5rem;font-weight:700;color:var(--primary);line-height:1">--</div>
+            <div style="font-size:0.75rem;color:var(--text-light);margin-top:2px">Commitment Score</div>
+            <div style="margin-top:6px;background:#e5e7eb;border-radius:10px;height:8px">
+              <div id="scoreBar" style="background:#10b981;border-radius:10px;height:8px;width:0%;transition:width 0.6s ease"></div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:1.25rem;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:0.82rem;text-align:center">
+          <div style="padding:8px;background:#d1fae5;border-radius:8px;color:#065f46"><strong>+2 pts</strong><br>Show up on time</div>
+          <div style="padding:8px;background:#d1fae5;border-radius:8px;color:#065f46"><strong>+1 pt</strong><br>5-star rating received</div>
+          <div style="padding:8px;background:#fee2e2;border-radius:8px;color:#991b1b"><strong>−25 pts</strong><br>No-show</div>
+        </div>
+      </div>
+
+      <div class="grid-profile">
+        <!-- Left: Edit profile -->
+        <div class="card">
+          <h2 style="margin-bottom:0.25rem">Edit Profile</h2>
+          <p class="subtitle">Better info = better matches.</p>
+          <div class="grid-2" style="gap:12px">
+            <div class="form-group">
+              <label>Height (cm)</label>
+              <input type="number" id="p-height" placeholder="e.g. 175" min="100" max="220">
+            </div>
+            <div class="form-group">
+              <label>Weight (kg)</label>
+              <input type="number" id="p-weight" placeholder="e.g. 70" min="30" max="200">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Primary District</label>
+            <select id="p-district">
+              <option value="Cau Giay">Cau Giay</option>
+              <option value="Dong Da">Dong Da</option>
+              <option value="Hai Ba Trung">Hai Ba Trung</option>
+              <option value="Hoan Kiem">Hoan Kiem</option>
+              <option value="Ba Dinh">Ba Dinh</option>
+              <option value="Long Bien">Long Bien</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Gear &amp; Equipment</label>
+            <input type="text" id="p-equipment" placeholder="e.g. Yonex Astrox 88D, Nike Pegasus 40">
+          </div>
+          <div class="form-group">
+            <label>Sports I Play</label>
+            <div class="checkbox-grid" style="grid-template-columns:1fr 1fr;gap:8px">
+              <label class="sport-option"><input type="checkbox" name="p-sports" value="Badminton"> 🏸 Badminton</label>
+              <label class="sport-option"><input type="checkbox" name="p-sports" value="Running">   🏃 Running</label>
+              <label class="sport-option"><input type="checkbox" name="p-sports" value="Football">  ⚽ Football</label>
+              <label class="sport-option"><input type="checkbox" name="p-sports" value="Pickleball">🏓 Pickleball</label>
+              <label class="sport-option"><input type="checkbox" name="p-sports" value="Gym">       🏋️ Gym</label>
+              <label class="sport-option"><input type="checkbox" name="p-sports" value="Cycling">   🚴 Cycling</label>
+            </div>
+          </div>
+          <button class="btn-primary" onclick="saveProfile()" style="width:100%;margin-top:0.5rem">💾 Save Profile</button>
+        </div>
+
+        <!-- Right: Session history -->
+        <div class="card">
+          <h2 style="margin-bottom:0.25rem">My Sessions</h2>
+          <p class="subtitle">Rate your partners after each session to improve your score.</p>
+          <div id="joinedSessionsList"></div>
+        </div>
+      </div>
+
+    </div>
+
+  </div><!-- /container -->
+
+  <div id="toast" class="toast"></div>
+  <script src="js/app.js"></script>
+</body>
+</html>

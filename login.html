@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Sport Partner Finder</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo">Sport Partner Finder</a>
+  </header>
+
+  <div class="container" style="max-width:440px;margin-top:5rem">
+    <div class="card">
+      <div style="text-align:center;margin-bottom:1.75rem">
+        <div style="font-size:2.5rem;margin-bottom:0.5rem">🏅</div>
+        <h2 style="font-size:1.4rem">Welcome Back</h2>
+        <p style="color:var(--text-light);margin-top:0.3rem;font-size:0.9rem">Log in to find your next sport partner.</p>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" required placeholder="name@university.edu.vn" autocomplete="email">
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" required placeholder="Your password" autocomplete="current-password">
+      </div>
+
+      <button type="button" onclick="simulateLogin()" style="margin-top:0.5rem">Sign In</button>
+
+      <div class="text-center" style="margin-top:1.25rem;font-size:0.9rem;color:var(--text-light)">
+        Don't have an account?
+        <a href="signup.html" style="color:var(--primary);text-decoration:none;font-weight:600"> Sign up</a>
+      </div>
+
+      <div style="margin-top:1rem;padding:0.75rem;background:#eff6ff;border-radius:8px;font-size:0.82rem;color:#1d4ed8;text-align:center">
+        💡 Demo: Enter any email + any password to log in.
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <script src="js/app.js"></script>
+</body>
+</html>

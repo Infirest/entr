@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile | Sport Partner Finder</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="logo">Sport Partner Finder</a>
+    <div class="user-stats">
+      <span id="userNameDisplay">Welcome, Member</span>
+      <span class="commitment-badge score-high">Commitment: 98/100</span>
+      <a href="index.html" style="color:var(--text-light);text-decoration:none;font-size:0.875rem">← Dashboard</a>
+    </div>
+  </header>
+
+  <div class="container" style="max-width:720px">
+
+    <!-- COMMITMENT SCORE OVERVIEW -->
+    <div class="card" style="background:linear-gradient(135deg,#eff6ff 0%,#fff 100%)">
+      <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+        <div style="font-size:3rem">🏅</div>
+        <div style="flex:1">
+          <h2 id="profileName" style="margin-bottom:4px">Your Profile</h2>
+          <p style="color:var(--text-light);font-size:0.875rem">Keep your commitment score high to get better matches.</p>
+        </div>
+        <div style="text-align:center">
+          <div id="scoreDisplay" style="font-size:2.25rem;font-weight:700;color:var(--primary);line-height:1">98</div>
+          <div style="font-size:0.75rem;color:var(--text-light);margin-top:2px">Commitment Score</div>
+          <div style="margin-top:6px;background:#e5e7eb;border-radius:10px;height:8px;width:100px">
+            <div id="scoreBar" style="background:var(--secondary);border-radius:10px;height:8px;width:98%;transition:width 0.5s"></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:1.25rem;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:0.82rem;text-align:center">
+        <div style="padding:8px;background:#d1fae5;border-radius:8px;color:#065f46">
+          <strong>+2 pts</strong><br>Show up on time
+        </div>
+        <div style="padding:8px;background:#d1fae5;border-radius:8px;color:#065f46">
+          <strong>+1 pt</strong><br>5-star rating
+        </div>
+        <div style="padding:8px;background:#fee2e2;border-radius:8px;color:#991b1b">
+          <strong>−25 pts</strong><br>No-show
+        </div>
+      </div>
+    </div>
+
+    <!-- EDIT PROFILE -->
+    <div class="card">
+      <h2 style="margin-bottom:0.35rem">Edit Profile</h2>
+      <p style="color:var(--text-light);font-size:0.875rem;margin-bottom:1.5rem">Better info = better matches.</p>
+
+      <form id="profileForm" onsubmit="return false">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="form-group">
+            <label for="p-height">Height (cm)</label>
+            <input type="number" id="p-height" placeholder="e.g. 175" min="100" max="220">
+          </div>
+          <div class="form-group">
+            <label for="p-weight">Weight (kg)</label>
+            <input type="number" id="p-weight" placeholder="e.g. 70" min="30" max="200">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="p-district">Primary District</label>
+          <select id="p-district">
+            <option value="Cau Giay">Cau Giay</option>
+            <option value="Dong Da">Dong Da</option>
+            <option value="Hai Ba Trung">Hai Ba Trung</option>
+            <option value="Hoan Kiem">Hoan Kiem</option>
+            <option value="Ba Dinh">Ba Dinh</option>
+            <option value="Long Bien">Long Bien</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="p-equipment">Gear & Equipment</label>
+          <p class="sub-label">Helps match you with compatible players. E.g. "Yonex Astrox 88D, Nike Pegasus 40"</p>
+          <textarea id="p-equipment" rows="3" placeholder="List your gear here…"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Sports I Play</label>
+          <div class="checkbox-grid">
+            <label class="sport-option"><input type="checkbox" name="p-sports" value="Badminton"> 🏸 Badminton</label>
+            <label class="sport-option"><input type="checkbox" name="p-sports" value="Running">   🏃 Running</label>
+            <label class="sport-option"><input type="checkbox" name="p-sports" value="Football">  ⚽ Football</label>
+            <label class="sport-option"><input type="checkbox" name="p-sports" value="Pickleball">🏓 Pickleball</label>
+            <label class="sport-option"><input type="checkbox" name="p-sports" value="Gym">       🏋️ Gym</label>
+            <label class="sport-option"><input type="checkbox" name="p-sports" value="Cycling">   🚴 Cycling</label>
+          </div>
+        </div>
+
+        <button type="button" onclick="saveProfile()" style="margin-top:0.5rem">Save Profile</button>
+      </form>
+    </div>
+
+    <!-- JOINED SESSIONS + RATINGS -->
+    <div class="card">
+      <h2 style="margin-bottom:0.35rem">My Sessions</h2>
+      <p style="color:var(--text-light);font-size:0.875rem;margin-bottom:1.25rem">
+        Rate your partners after each session to keep your score healthy.
+      </p>
+      <div id="joinedSessionsList"></div>
+    </div>
+
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <script src="js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+      const score = user.commitmentScore ?? localStorage.getItem('commitmentScore') ?? 98;
+
+      const nameEl = document.getElementById('profileName');
+      if (nameEl && user.name) nameEl.textContent = user.name + "'s Profile";
+
+      const scoreDisplay = document.getElementById('scoreDisplay');
+      const scoreBar = document.getElementById('scoreBar');
+      if (scoreDisplay) scoreDisplay.textContent = score;
+      if (scoreBar) scoreBar.style.width = score + '%';
+      if (scoreBar) {
+        scoreBar.style.background = score >= 90 ? '#10b981' : score >= 70 ? '#f59e0b' : '#ef4444';
+      }
+    });
+  </script>
+</body>
+</html>

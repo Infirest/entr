@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up | Sport Partner Finder</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo">Sport Partner Finder</a>
+    <div class="user-stats">
+      <a href="login.html" style="color:var(--text-light);text-decoration:none;font-size:0.9rem">
+        Already have an account? <strong>Log in</strong>
+      </a>
+    </div>
+  </header>
+
+  <div class="container" style="max-width:600px;margin-top:2.5rem">
+    <div class="card">
+      <div style="text-align:center;margin-bottom:1.5rem">
+        <h2 style="font-size:1.4rem;margin-bottom:0.25rem">Join Sport Partner Finder</h2>
+        <p style="color:var(--text-light);font-size:0.9rem">Find your perfect sport partner in Hanoi.</p>
+      </div>
+
+      <!-- Step indicator -->
+      <div class="step-indicator">
+        <div class="step active" id="indicator-1"></div>
+        <div class="step-line"></div>
+        <div class="step" id="indicator-2"></div>
+        <div class="step-line"></div>
+        <div class="step" id="indicator-3"></div>
+      </div>
+
+      <form id="signupForm" onsubmit="return false">
+
+        <!-- STEP 1: Sports & Location -->
+        <div id="step-1" class="form-step">
+          <h3 style="margin-bottom:0.4rem">Step 1 — What sports do you play?</h3>
+          <p class="sub-label" style="margin-bottom:1rem">Choose as many as you like.</p>
+
+          <div class="checkbox-grid" style="margin-bottom:1.5rem">
+            <label class="sport-option"><input type="checkbox" name="sports[]" value="badminton"> 🏸 Badminton</label>
+            <label class="sport-option"><input type="checkbox" name="sports[]" value="running">   🏃 Running</label>
+            <label class="sport-option"><input type="checkbox" name="sports[]" value="football">  ⚽ Football</label>
+            <label class="sport-option"><input type="checkbox" name="sports[]" value="pickleball">🏓 Pickleball</label>
+            <label class="sport-option"><input type="checkbox" name="sports[]" value="gym">       🏋️ Gym</label>
+            <label class="sport-option"><input type="checkbox" name="sports[]" value="cycling">   🚴 Cycling</label>
+            <label class="sport-option"><input type="checkbox" name="sports[]" value="swimming">  🏊 Swimming</label>
+            <label class="sport-option"><input type="checkbox" name="sports[]" value="tennis">    🎾 Tennis</label>
+            <label class="sport-option"><input type="checkbox" name="sports[]" value="walking">   🚶 Walking</label>
+            <label class="sport-option"><input type="checkbox" name="sports[]" value="golf">      ⛳ Golf</label>
+          </div>
+
+          <div class="form-group">
+            <label for="country-step1">Country</label>
+            <select id="country-step1" name="country" required>
+              <option value="">Select country</option>
+              <option value="Vietnam" selected>Vietnam 🇻🇳</option>
+              <option value="Thailand">Thailand 🇹🇭</option>
+              <option value="Singapore">Singapore 🇸🇬</option>
+              <option value="Japan">Japan 🇯🇵</option>
+              <option value="Korea">South Korea 🇰🇷</option>
+              <option value="UK">The UK 🇬🇧</option>
+              <option value="USA">The USA 🇺🇸</option>
+              <option value="Germany">Germany 🇩🇪</option>
+              <option value="France">France 🇫🇷</option>
+            </select>
+          </div>
+
+          <button type="button" onclick="nextStep(2)">Next Step →</button>
+        </div>
+
+        <!-- STEP 2: Personal Info -->
+        <div id="step-2" class="form-step hidden">
+          <h3 style="margin-bottom:0.4rem">Step 2 — Tell us about yourself</h3>
+          <p class="sub-label" style="margin-bottom:1rem">This helps us match you with compatible partners.</p>
+
+          <div class="form-group">
+            <label>Gender</label>
+            <div class="radio-group">
+              <label><input type="radio" name="own_gender" value="man" required> Man</label>
+              <label><input type="radio" name="own_gender" value="woman"> Woman</label>
+              <label><input type="radio" name="own_gender" value="other"> Other</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="signup-age">Age</label>
+            <select id="signup-age" name="age" required>
+              <option value="">Select your age</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="skill-level">Skill Level</label>
+            <select id="skill-level" name="skill_level" required>
+              <option value="">Select skill level</option>
+              <option value="Beginner">Beginner — Just getting started</option>
+              <option value="Intermediate">Intermediate — Play regularly</option>
+              <option value="Advanced">Advanced — Competitive level</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="location">City / District (where you want to play)</label>
+            <input type="text" id="location" name="location" placeholder="e.g. Cau Giay, Hanoi" required>
+          </div>
+
+          <div class="button-group">
+            <button type="button" class="btn-secondary" onclick="prevStep(1)" style="margin-top:0">← Back</button>
+            <button type="button" onclick="nextStep(3)">Next Step →</button>
+          </div>
+        </div>
+
+        <!-- STEP 3: Account Creation -->
+        <div id="step-3" class="form-step hidden">
+          <h3 style="margin-bottom:0.4rem">Step 3 — Create your account</h3>
+          <p class="sub-label" style="margin-bottom:1rem">Almost there! Set up your login details.</p>
+
+          <div class="form-group">
+            <label for="firstname">First Name <span class="sub-label" style="display:inline">(or an alias)</span></label>
+            <input type="text" id="firstname" name="firstname" placeholder="e.g. Viết" required autocomplete="given-name">
+          </div>
+
+          <div class="form-group">
+            <label for="signup-email">Email Address <span class="sub-label" style="display:inline">(not visible to others)</span></label>
+            <input type="email" id="signup-email" name="email" required autocomplete="email">
+          </div>
+
+          <div class="form-group">
+            <label for="signup-password">Password <span class="sub-label" style="display:inline">(min. 6 characters)</span></label>
+            <input type="password" id="signup-password" name="password" required autocomplete="new-password">
+          </div>
+
+          <div class="form-group" style="margin-top:1.25rem">
+            <label style="font-weight:normal;font-size:0.88rem;display:flex;gap:10px;align-items:flex-start;cursor:pointer">
+              <input type="checkbox" name="terms" required style="width:16px;height:16px;margin-top:2px;flex-shrink:0;accent-color:var(--primary)">
+              I confirm I am 18 years or older and agree to the Terms and Conditions.
+            </label>
+          </div>
+
+          <div class="button-group">
+            <button type="button" class="btn-secondary" onclick="prevStep(2)" style="margin-top:0">← Back</button>
+            <button type="button" onclick="simulateSignup()">🏅 Complete Sign Up</button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <script src="js/app.js"></script>
+</body>
+</html>
